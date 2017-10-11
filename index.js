@@ -228,7 +228,7 @@ Blockchain.prototype._putBlock = function (block, cb, isGenesis) {
     var blockDetails = {
       parent: block.header.parentHash.toString('hex'),
       td: totalDifficulty.toString(),
-      number: ethUtil.bufferToInt(block.header.number),
+      number: block.header.number,
       child: null,
       staleChildren: [],
       genesis: block.isGenesis()
@@ -257,11 +257,10 @@ Blockchain.prototype._putBlock = function (block, cb, isGenesis) {
     if (block.isGenesis() || totalDifficulty.cmp(self.meta.td) === 1) {
       blockDetails.inChain = true
       self.meta.rawHead = blockHashHexString
-      self.meta.height = ethUtil.bufferToInt(block.header.number)
+      self.meta.height = block.header.number
       self.meta.td = totalDifficulty
 
-      // blockNumber as decimal string
-      const blockNumber = parseInt(block.header.number.toString('hex') || '00', 16).toString()
+      const blockNumber = new BN(block.header.number)
 
       // index by number
       dbOps.push({
@@ -297,6 +296,52 @@ Blockchain.prototype._putBlock = function (block, cb, isGenesis) {
       })
       next()
     }
+  }
+}
+
+function dumpDb(db, cb) {
+db.createReadStream()
+  .on('data', function (data) {
+    console.log(data.key, '=', data.value)
+  })
+  .on('end', function () {
+    cb()
+    return
+  })
+}
+
+/**
+ *Gets a block by its block number
+ * @method getBlockByNumber
+ * @param {Buffer} blockNumber - the block number to retrieve
+ * @param {Function} cb - the callback function
+ */
+Blockchain.prototype.getBlockByNumber = function (blockNumber, cb) {
+  const self = this
+
+  async.waterfall([
+    (cb) => lookupNumberToHash(blockNumber, cb),
+    (blockHash, cb) => lookupByHash(blockHash, cb)
+  ], cb)
+
+  function lookupNumberToHash (hexString, cb) {
+    self.detailsDb.get(hexString, {
+      valueEncoding: 'binary'
+    }, function (err, result) {
+      if (err) return cb(err)
+      cb(null, result)
+    })
+  }
+
+  function lookupByHash (hash, cb) {
+    self.blockDb.get(hash, {
+      keyEncoding: 'binary',
+      valueEncoding: 'binary'
+    }, (err, encodedBlock) => {
+      if (err) return cb(err)
+      let block = new Block(rlp.decode(encodedBlock))
+      cb(null, block)
+    })
   }
 }
 
