@@ -6,9 +6,28 @@
 
 A module to store and interact with blocks.
 
-# INSTALL
+# INSTALLATION
+This package can be installed using NPM.
 `npm install ethereumjs-blockchain`
 
+# QUICKSTART
+To get started with ethereumjs-blockchain methods:
+
+- Create a new directory
+- Go to the directory in your terminal
+
+`$ npm init -y`
+`$ npm install ethereumjs-blockchain --save`
+
+- Create a new index.js file
+Create your first blockchain object to access all methods available in the below module documentation
+```javascript
+const Blockchain = require('ethereumjs-blockchain')
+
+let blockchain = new Blockchain();
+
+console.log(blockchain);
+```
 # API
 
 # ethereumjs-blockchain
