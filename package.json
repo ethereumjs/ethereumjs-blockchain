@@ -30,7 +30,7 @@
     "ethereumjs-util": "~5.1.0",
     "flow-stoplight": "^1.0.0",
     "levelup": "^1.3.0",
-    "memdown": "^1.1.0",
+    "memdown": "^2.0.0",
     "safe-buffer": "^5.1.1",
     "semaphore": "^1.0.3"
   },
