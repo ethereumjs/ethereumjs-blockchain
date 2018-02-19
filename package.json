@@ -37,7 +37,7 @@
   "devDependencies": {
     "coveralls": "^3.0.0",
     "istanbul": "^0.4.2",
-    "standard": "^10.0.0-beta.0",
+    "standard": "^11.0.0",
     "tape": "^4.2.1"
   }
 }
