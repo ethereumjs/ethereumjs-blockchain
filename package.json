@@ -43,7 +43,7 @@
     "ethereumjs-common": "^1.1.0",
     "ethereumjs-util": "~6.1.0",
     "flow-stoplight": "^1.0.0",
-    "level-mem": "^3.0.1",
+    "level-mem": "^4.0.0",
     "lru-cache": "^5.1.1",
     "rlp": "^2.2.2",
     "semaphore": "^1.1.0",
