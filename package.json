@@ -1,18 +1,18 @@
 {
   "name": "ethereumjs-blockchain",
-  "version": "3.4.0",
+  "version": "4.0.0",
   "description": "A module to store and interact with blocks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*.js"
+    "dist/**/*"
   ],
   "scripts": {
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "build": "ethereumjs-config-build",
     "coverage": "ethereumjs-config-coverage",
     "coveralls": "ethereumjs-config-coveralls",
-    "docs:build": "typedoc --out docs --mode file --readme none --theme markdown --mdEngine github --excludeNotExported src",
+    "docs:build": "typedoc --out docs --mode file --readme none --theme markdown --mdEngine github --excludeNotExported --excludePrivate src",
     "format": "ethereumjs-config-format",
     "format:fix": "ethereumjs-config-format-fix",
     "tslint": "ethereumjs-config-tslint",
@@ -21,6 +21,11 @@
     "lint": "ethereumjs-config-lint",
     "lint:fix": "ethereumjs-config-lint-fix",
     "test": "ts-node node_modules/tape/bin/tape ./test/index.ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
   },
   "repository": {
     "type": "git",
@@ -47,7 +52,7 @@
     "lru-cache": "^5.1.1",
     "rlp": "^2.2.2",
     "semaphore": "^1.1.0",
-    "util": "^0.11.1"
+    "util": "^0.12.0"
   },
   "devDependencies": {
     "@ethereumjs/config-nyc": "^1.1.1",
@@ -61,6 +66,7 @@
     "@types/semaphore": "^1.1.0",
     "@types/tape": "^4.2.33",
     "coveralls": "^3.0.2",
+    "husky": "^2.1.0",
     "nyc": "^14.0.0",
     "prettier": "^1.16.4",
     "tape": "^4.9.1",
