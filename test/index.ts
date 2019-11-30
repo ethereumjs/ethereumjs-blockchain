@@ -1,6 +1,6 @@
 import * as async from 'async'
 import Common from 'ethereumjs-common'
-import { rlp, toBuffer } from 'ethereumjs-util'
+import { toBuffer } from 'ethereumjs-util'
 import * as test from 'tape'
 import Blockchain from '../src'
 import { isConsecutive, createTestDB } from './util'
@@ -106,6 +106,7 @@ test('blockchain test', (t) => {
     }
 
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       addNextBlock(1)
     })
   })
@@ -122,7 +123,9 @@ test('blockchain test', (t) => {
     block.header.parentHash = blocks[0].hash()
     blocks.push(block)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       blockchain.putBlock(block, (err?: any) => {
+        st.error(err, 'no error')
         blockchain.getBlock(1, (err?: any, block?: any) => {
           st.error(err, 'no error')
           st.equal(
@@ -140,6 +143,7 @@ test('blockchain test', (t) => {
     const genesisBlock = new Block()
     genesisBlock.setGenesisParams()
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       blockchain.getBlock(genesisBlock.hash(), (err?: any, block?: any) => {
         st.error(err, 'no error')
         st.equal(
@@ -160,6 +164,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -194,6 +199,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -228,6 +234,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -262,6 +269,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -296,6 +304,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -330,6 +339,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -364,6 +374,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -398,6 +409,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -432,6 +444,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -466,6 +479,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -500,6 +514,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -534,6 +549,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -568,6 +584,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -602,6 +619,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -639,6 +657,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -676,6 +695,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -689,7 +709,7 @@ test('blockchain test', (t) => {
           if (block.header.number.equals(toBuffer(putNumberOfBlocks))) {
             blockchain.iterator(
               'error',
-              (block: any, _: any, cb: any) => {
+              (_block: any, _: any, cb: any) => {
                 cb(new Error('iterator func error'))
               },
               (err: Error) => {
@@ -728,6 +748,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -775,6 +796,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -820,6 +842,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -891,6 +914,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -926,6 +950,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
@@ -961,6 +986,7 @@ test('blockchain test', (t) => {
     const putNumberOfBlocks = 15
     const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
+      st.error(err, 'no error')
       putArray.forEach((blockNumber: number) => {
         const block = new Block()
         block.header.number = toBuffer(blockNumber)
