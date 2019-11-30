@@ -750,19 +750,10 @@ test('blockchain test', t => {
     const blocks: any[] = []
     const genesisBlock = new Block()
     genesisBlock.setGenesisParams()
-    blocks.push(genesisBlock)
-    const putNumberOfBlocks = 15
-    const putArray = [...Array(putNumberOfBlocks + 1).keys()].slice(1)
+    blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      putArray.forEach((blockNumber: number) => {
-        const block = new Block()
-        block.header.number = toBuffer(blockNumber)
-        block.header.difficulty = '0xfffffff'
-        block.header.parentHash = blocks[blockNumber - 1].hash()
-        blocks.push(block)
-      })
-      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
         st.error(err, 'no error')
         st.end()
       })
