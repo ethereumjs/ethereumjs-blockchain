@@ -14,7 +14,7 @@ const testData = require('./testdata.json')
 test('blockchain test', t => {
   t.test('should not crash on getting head of a blockchain without a genesis', st => {
     const blockchain = new Blockchain({ validate: false })
-    blockchain.getHead((err?: any) => {
+    blockchain.getHead((err?: Error) => {
       st.error(err, 'no error')
       st.end()
     })
@@ -53,7 +53,7 @@ test('blockchain test', t => {
     const blockchain = new Blockchain({ validate: false })
     const genesisBlock = new Block()
     genesisBlock.setGenesisParams()
-    blockchain.putGenesis(genesisBlock, (err?: any) => {
+    blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
       st.equals(
         genesisBlock.hash().toString('hex'),
@@ -71,7 +71,7 @@ test('blockchain test', t => {
 
     blockchain.putBlock(
       badBlock,
-      (err?: any) => {
+      (err?: Error) => {
         st.ok(err, 'returned with error')
         st.end()
       },
@@ -91,7 +91,7 @@ test('blockchain test', t => {
       block.header.number = toBuffer(blockNumber)
       block.header.difficulty = '0xfffffff'
       block.header.parentHash = blocks[blockNumber - 1].hash()
-      blockchain.putBlock(block, (err?: any) => {
+      blockchain.putBlock(block, (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -124,7 +124,7 @@ test('blockchain test', t => {
     blocks.push(block)
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlock(block, (err?: any) => {
+      blockchain.putBlock(block, (err?: Error) => {
         st.error(err, 'no error')
         blockchain.getBlock(1, (err?: any, block?: any) => {
           st.error(err, 'no error')
@@ -157,7 +157,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -181,7 +181,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -205,7 +205,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -229,7 +229,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -253,7 +253,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -277,7 +277,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -301,7 +301,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -325,7 +325,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -349,7 +349,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -373,7 +373,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -397,7 +397,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -421,7 +421,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -445,7 +445,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -469,7 +469,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -494,7 +494,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -524,7 +524,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -567,7 +567,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -607,7 +607,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -642,7 +642,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -703,7 +703,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -728,7 +728,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -753,7 +753,7 @@ test('blockchain test', t => {
     blocks.push(...generateBlocks(15, genesisBlock))
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.putBlocks(blocks.slice(1), (err?: any) => {
+      blockchain.putBlocks(blocks.slice(1), (err?: Error) => {
         st.error(err, 'no error')
         st.end()
       })
@@ -856,7 +856,7 @@ test('blockchain test', t => {
       header.number = toBuffer(1)
       header.difficulty = '0xfffffff'
       header.parentHash = genesisBlock.hash()
-      blockchain.putHeader(header, (err?: any) => {
+      blockchain.putHeader(header, (err?: Error) => {
         if (err) {
           return st.error(err)
         }
@@ -910,7 +910,7 @@ test('blockchain test', t => {
       async.series(
         [
           cb =>
-            blockchain.putBlock(block, (err?: any) => {
+            blockchain.putBlock(block, (err?: Error) => {
               if (err) {
                 return st.error(err)
               }
@@ -965,7 +965,7 @@ test('blockchain test', t => {
         [
           // first, add some headers and make sure the latest block remains the same
           cb =>
-            blockchain.putHeaders(headers, (err?: any) => {
+            blockchain.putHeaders(headers, (err?: Error) => {
               if (err) {
                 return cb(err)
               }
