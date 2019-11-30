@@ -1,8 +1,20 @@
-import { rlp } from 'ethereumjs-util'
+import { rlp, toBuffer } from 'ethereumjs-util'
 import BN = require('bn.js')
 
 const Block = require('ethereumjs-block')
 const level = require('level-mem')
+
+export function generateBlocks(numberOfBlocks: number, genesisBlock: any) {
+  const blocks = [genesisBlock]
+  for (let i = 1; i < numberOfBlocks + 1; i++) {
+    const block = new Block()
+    block.header.number = toBuffer(i)
+    block.header.difficulty = '0xfffffff'
+    block.header.parentHash = blocks[i - 1].hash()
+    blocks.push(block)
+  }
+  return blocks
+}
 
 export function isConsecutive(blocks: Array<any>) {
   return !blocks.some((block: any, index: number) => {
