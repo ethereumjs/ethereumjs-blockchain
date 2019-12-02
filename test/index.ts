@@ -2,7 +2,7 @@ import * as async from 'async'
 import Common from 'ethereumjs-common'
 import { toBuffer } from 'ethereumjs-util'
 import * as test from 'tape'
-import Blockchain from '../dist'
+import Blockchain, { Block } from '../dist'
 import { generateBlockchain, generateBlocks, isConsecutive, createTestDB } from './util'
 
 import BN = require('bn.js')
@@ -81,8 +81,8 @@ test('blockchain test', t => {
 
   t.test('should start with zero blocks', st => {
     const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
-    blockchain.getBlocks(0, 5, 0, false, (err?: any, getBlocks?: any) => {
-      st.equal(err.message, 'No head found.', 'should return correct error')
+    blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks?: Block[]) => {
+      st.equal(err!.message, 'No head found.', 'should return correct error')
       st.equal(getBlocks, undefined, 'should not return any blocks')
       st.end()
     })
@@ -122,7 +122,7 @@ test('blockchain test', t => {
 
   t.test('should get block by number', st => {
     const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
-    const blocks: any[] = []
+    const blocks: Block[] = []
     const genesisBlock = new Block()
     genesisBlock.setGenesisParams()
     blocks.push(genesisBlock)
@@ -135,7 +135,7 @@ test('blockchain test', t => {
       st.error(err, 'no error')
       blockchain.putBlock(block, (err?: Error) => {
         st.error(err, 'no error')
-        blockchain.getBlock(1, (err?: any, block?: any) => {
+        blockchain.getBlock(1, (err?: Error, block?: Block) => {
           st.error(err, 'no error')
           st.equal(block.hash().toString('hex'), blocks[1].hash().toString('hex'))
           st.end()
@@ -150,7 +150,7 @@ test('blockchain test', t => {
     genesisBlock.setGenesisParams()
     blockchain.putGenesis(genesisBlock, (err?: Error) => {
       st.error(err, 'no error')
-      blockchain.getBlock(genesisBlock.hash(), (err?: any, block?: any) => {
+      blockchain.getBlock(genesisBlock.hash(), (err?: Error, block?: Block) => {
         st.error(err, 'no error')
         st.equal(block.hash().toString('hex'), genesisBlock.hash().toString('hex'))
         st.end()
@@ -162,11 +162,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: genesisHash, max: 5, skip: 0, reverse: false
-    blockchain.getBlocks(blocks[0].hash(), 5, 0, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(blocks[0].hash(), 5, 0, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
-      st.ok(getBlocks[0].header.number.equals(blocks[0].header.number))
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5)
+      st.ok(getBlocks![0].header.number.equals(blocks[0].header.number))
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -175,11 +175,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: genesisHash, max: 5, skip: 1, reverse: false
-    blockchain.getBlocks(blocks[0].hash(), 5, 1, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(blocks[0].hash(), 5, 1, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5, 'should get 5 blocks')
-      st.ok(getBlocks[0].header.number.equals(blocks[1].header.number), 'should skip first block')
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5, 'should get 5 blocks')
+      st.ok(getBlocks![0].header.number.equals(blocks[1].header.number), 'should skip first block')
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -188,14 +188,14 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: genesisHash, max: 4, skip: 2, reverse: false
-    blockchain.getBlocks(blocks[0].hash(), 4, 2, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(blocks[0].hash(), 4, 2, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 4, 'should get 4 blocks')
+      st.equal(getBlocks!.length, 4, 'should get 4 blocks')
       st.ok(
-        getBlocks[0].header.number.equals(blocks[2].header.number),
+        getBlocks![0].header.number.equals(blocks[2].header.number),
         'should skip first two blocks',
       )
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -204,11 +204,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(15)
     st.error(error, 'no error')
     // start: genesisHash, max: 17, skip: 0, reverse: false
-    blockchain.getBlocks(blocks[0].hash(), 17, 0, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(blocks[0].hash(), 17, 0, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 15)
-      st.ok(getBlocks[0].header.number.equals(blocks[0].header.number))
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 15)
+      st.ok(getBlocks![0].header.number.equals(blocks[0].header.number))
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -217,11 +217,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: 0, max: 5, skip: 0, reverse: false
-    blockchain.getBlocks(0, 5, 0, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
-      st.ok(getBlocks[0].header.number.equals(blocks[0].header.number))
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5)
+      st.ok(getBlocks![0].header.number.equals(blocks[0].header.number))
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -230,11 +230,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: 1, max: 5, skip: 1, reverse: false
-    blockchain.getBlocks(1, 5, 1, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(1, 5, 1, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
-      st.ok(getBlocks[0].header.number.equals(blocks[2].header.number), 'should skip first block')
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5)
+      st.ok(getBlocks![0].header.number.equals(blocks[2].header.number), 'should skip first block')
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -243,14 +243,14 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: 0, max: 5, skip: 2, reverse: false
-    blockchain.getBlocks(0, 5, 2, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(0, 5, 2, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
+      st.equal(getBlocks!.length, 5)
       st.ok(
-        getBlocks[0].header.number.equals(blocks[2].header.number),
+        getBlocks![0].header.number.equals(blocks[2].header.number),
         'should skip first two blocks',
       )
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -259,11 +259,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(15)
     st.error(error, 'no error')
     // start: 0, max: 17, skip: 0, reverse: false
-    blockchain.getBlocks(0, 17, 0, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(0, 17, 0, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 15)
-      st.ok(getBlocks[0].header.number.equals(blocks[0].header.number))
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 15)
+      st.ok(getBlocks![0].header.number.equals(blocks[0].header.number))
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -272,11 +272,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: 1, max: 5, skip: 0, reverse: false
-    blockchain.getBlocks(1, 5, 0, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(1, 5, 0, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
-      st.ok(getBlocks[0].header.number.equals(blocks[1].header.number))
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5)
+      st.ok(getBlocks![0].header.number.equals(blocks[1].header.number))
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -285,11 +285,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: 5, max: 5, skip: 0, reverse: false
-    blockchain.getBlocks(5, 5, 0, false, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(5, 5, 0, false, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
-      st.ok(getBlocks[0].header.number.equals(blocks[5].header.number))
-      st.ok(isConsecutive(getBlocks), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5)
+      st.ok(getBlocks![0].header.number.equals(blocks[5].header.number))
+      st.ok(isConsecutive(getBlocks!), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -298,11 +298,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(25)
     st.error(error, 'no error')
     // start: 5, max: 5, skip: 0, reverse: true
-    blockchain.getBlocks(5, 5, 0, true, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(5, 5, 0, true, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 5)
-      st.ok(getBlocks[0].header.number.equals(blocks[5].header.number))
-      st.ok(isConsecutive(getBlocks.reverse()), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 5)
+      st.ok(getBlocks![0].header.number.equals(blocks[5].header.number))
+      st.ok(isConsecutive(getBlocks!.reverse()), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -311,11 +311,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(15)
     st.error(error, 'no error')
     // start: 5, max: 15, skip: 0, reverse: true
-    blockchain.getBlocks(5, 15, 0, true, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(5, 15, 0, true, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 6)
-      st.ok(getBlocks[0].header.number.equals(blocks[5].header.number))
-      st.ok(isConsecutive(getBlocks.reverse()), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 6)
+      st.ok(getBlocks![0].header.number.equals(blocks[5].header.number))
+      st.ok(isConsecutive(getBlocks!.reverse()), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -324,11 +324,11 @@ test('blockchain test', t => {
     const { blockchain, blocks, error } = await generateBlockchain(15)
     st.error(error, 'no error')
     // start: 10, max: 10, skip: 1, reverse: true
-    blockchain.getBlocks(10, 10, 1, true, (err?: any, getBlocks?: any) => {
+    blockchain.getBlocks(10, 10, 1, true, (err?: Error, getBlocks?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks.length, 9)
-      st.ok(getBlocks[0].header.number.equals(blocks[9].header.number), 'should skip first block')
-      st.ok(isConsecutive(getBlocks.reverse()), 'blocks should be consecutive')
+      st.equal(getBlocks!.length, 9)
+      st.ok(getBlocks![0].header.number.equals(blocks[9].header.number), 'should skip first block')
+      st.ok(isConsecutive(getBlocks!.reverse()), 'blocks should be consecutive')
       st.end()
     })
   })
@@ -339,7 +339,7 @@ test('blockchain test', t => {
     const neededHash = Buffer.from('abcdef', 'hex')
     blockchain.selectNeededHashes(
       [blocks[0].hash(), blocks[9].hash(), neededHash],
-      (err?: any, hashes?: any) => {
+      (err?: Error, hashes?: any) => {
         st.error(err, 'no error')
         st.equals(hashes[0].toString('hex'), neededHash.toString('hex'))
         st.end()
@@ -353,7 +353,7 @@ test('blockchain test', t => {
     let i = 0
     blockchain.iterator(
       'test',
-      (block: any, _: any, cb: any) => {
+      (block: Block, _: any, cb: any) => {
         if (block.hash().equals(blocks[i + 1].hash())) {
           i++
         }
@@ -371,7 +371,7 @@ test('blockchain test', t => {
     st.error(error, 'no error')
     blockchain.iterator(
       'error',
-      (_block: any, _: any, cb: any) => {
+      (_block: Block, _: any, cb: any) => {
         cb(new Error('iterator func error'))
       },
       (err: Error) => {
@@ -414,7 +414,7 @@ test('blockchain test', t => {
     let i = 0
     blockchain.iterator(
       'test',
-      (block: any, _: any, cb: any) => {
+      (block: Block, _: any, cb: any) => {
         if (block.hash().equals(blocks[i + 1].hash())) {
           i++
         }
@@ -537,29 +537,29 @@ test('blockchain test', t => {
   t.test('should put one block at a time', st => {
     const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
     const blocks = generateBlocks(15)
-    blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks0?: any) => {
+    blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks0?: Block[]) => {
       st.error(err, 'no error')
-      st.equal(getBlocks0.length, 0)
+      st.equal(getBlocks0!.length, 0)
     })
     blockchain.putBlock(
       blocks[0],
       (err?: Error) => {
         st.error(err, 'no error')
-        blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks1?: any) => {
+        blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks1?: Block[]) => {
           st.error(err, 'no error')
-          st.equal(getBlocks1.length, 1)
+          st.equal(getBlocks1!.length, 1)
         })
         blockchain.putBlock(blocks[1], (err?: Error) => {
           st.error(err, 'no error')
-          blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks2?: any) => {
+          blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks2?: Block[]) => {
             st.error(err, 'no error')
-            st.equal(getBlocks2.length, 2)
+            st.equal(getBlocks2!.length, 2)
           })
           blockchain.putBlock(blocks[2], (err?: Error) => {
             st.error(err, 'no error')
-            blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks3?: any) => {
+            blockchain.getBlocks(0, 5, 0, false, (err?: Error, getBlocks3?: Block[]) => {
               st.error(err, 'no error')
-              st.equal(getBlocks3.length, 3)
+              st.equal(getBlocks3!.length, 3)
               st.end()
             })
           })
@@ -571,7 +571,7 @@ test('blockchain test', t => {
 
   t.test('should put multiple blocks at once', st => {
     const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
-    const blocks: any[] = []
+    const blocks: Block[] = []
     const genesisBlock = new Block()
     genesisBlock.setGenesisParams()
     blocks.push(...generateBlocks(15, [genesisBlock]))
@@ -585,7 +585,7 @@ test('blockchain test', t => {
   })
 
   t.test('should get heads', st => {
-    createTestDB((err?: Error, db?: any, genesis?: any) => {
+    createTestDB((err?: Error, db?: any, genesis?: Block) => {
       if (err) {
         return st.error(err)
       }
@@ -631,7 +631,7 @@ test('blockchain test', t => {
   })
 
   t.test('uncached db ops', st => {
-    createTestDB((err?: Error, db?: any, genesis?: any) => {
+    createTestDB((err?: Error, db?: any, genesis?: Block) => {
       if (err) {
         return st.error(err)
       }
@@ -688,7 +688,7 @@ test('blockchain test', t => {
         async.series(
           [
             cb =>
-              blockchain.getLatestHeader((err?: any, latest?: any) => {
+              blockchain.getLatestHeader((err?: Error, latest?: any) => {
                 if (err) {
                   return st.error(err)
                 }
@@ -700,7 +700,7 @@ test('blockchain test', t => {
                 cb()
               }),
             cb =>
-              blockchain.getLatestBlock((err?: any, latest?: any) => {
+              blockchain.getLatestBlock((err?: Error, latest?: any) => {
                 if (err) {
                   return st.error(err)
                 }
@@ -744,7 +744,7 @@ test('blockchain test', t => {
           cb => {
             // change block's extraData in order to modify its hash
             block.header.extraData = Buffer.from([1])
-            blockchain.getBlock(1, (err?: Error, block?: any) => {
+            blockchain.getBlock(1, (err?: Error, block?: Block) => {
               if (err) {
                 return st.error(err)
               }
@@ -844,7 +844,7 @@ test('blockchain test', t => {
                       cb()
                     }),
                   cb =>
-                    blockchain.getLatestBlock((err?: Error, getBlock?: any) => {
+                    blockchain.getLatestBlock((err?: Error, getBlock?: Block) => {
                       if (err) {
                         return st.error(err)
                       }

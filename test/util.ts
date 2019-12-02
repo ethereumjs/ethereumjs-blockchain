@@ -1,6 +1,6 @@
 import { rlp, toBuffer } from 'ethereumjs-util'
 import BN = require('bn.js')
-import Blockchain from '../dist'
+import Blockchain, { Block } from '../dist'
 
 const util = require('util')
 const Block = require('ethereumjs-block')
@@ -8,10 +8,10 @@ const level = require('level-mem')
 
 export const generateBlockchain = async (
   numberOfBlocks: number,
-  genesisBlock?: any,
+  genesisBlock?: Block,
 ): Promise<any> => {
   const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
-  const existingBlocks: any[] = genesisBlock ? [genesisBlock] : []
+  const existingBlocks: Block[] = genesisBlock ? [genesisBlock] : []
   const blocks = generateBlocks(numberOfBlocks, existingBlocks)
 
   const putGenesis = util.promisify(blockchain.putGenesis).bind(blockchain)
@@ -31,7 +31,7 @@ export const generateBlockchain = async (
   }
 }
 
-export const generateBlocks = (numberOfBlocks: number, existingBlocks?: any[]): any[] => {
+export const generateBlocks = (numberOfBlocks: number, existingBlocks?: Block[]): Block[] => {
   const blocks = existingBlocks ? existingBlocks : []
   if (blocks.length === 0) {
     const genesisBlock = new Block()
@@ -48,8 +48,8 @@ export const generateBlocks = (numberOfBlocks: number, existingBlocks?: any[]): 
   return blocks
 }
 
-export const isConsecutive = (blocks: any[]) => {
-  return !blocks.some((block: any, index: number) => {
+export const isConsecutive = (blocks: Block[]) => {
+  return !blocks.some((block: Block, index: number) => {
     if (index === 0) {
       return false
     }
