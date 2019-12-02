@@ -6,25 +6,61 @@ jobs:
       - image: node:8.16.2
     working_directory: ~/ethereumjs-blockchain
     steps:
-      - run: echo "hello node 8.16.2"
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: yarn install
-      - run: yarn test
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Run tests
+          command: yarn test
   build-node10:
     docker:
       - image: node:10.17.0
     working_directory: ~/ethereumjs-blockchain
     steps:
-      - run: echo "hello node 10.17.0"
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: yarn install
-      - run: yarn test
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Run tests
+          command: yarn test
   build-node12:
     docker:
       - image: node:12.13.1
     working_directory: ~/ethereumjs-blockchain
     steps:
-      - run: echo "hello node 12.13.1"
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: yarn install
-      - run: yarn test
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Run tests
+          command: yarn test
 
 workflows:
   version: 2
@@ -33,3 +69,15 @@ workflows:
       - build-node8
       - build-node10
       - build-node12
+
+jobs:
+    working_directory: ~/ethereumjs-blockchain
+
+    steps:
+
+
+      - run: yarn install
+
+
+      # run tests!
+      - run: yarn test
