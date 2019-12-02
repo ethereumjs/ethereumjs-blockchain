@@ -1,12 +1,41 @@
 import { rlp, toBuffer } from 'ethereumjs-util'
 import BN = require('bn.js')
+import Blockchain from '../dist'
 
+const util = require('util')
 const Block = require('ethereumjs-block')
 const level = require('level-mem')
 
-export function generateBlocks(numberOfBlocks: number, genesisBlock: any) {
-  const blocks = [genesisBlock]
-  for (let i = 1; i < numberOfBlocks + 1; i++) {
+export const generateBlockchain = async (numberOfBlocks: number, genesisBlock?: any): Promise<any> => {
+  const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
+  const existingBlocks: any[] = genesisBlock ? [genesisBlock] : []
+  const blocks = generateBlocks(numberOfBlocks, existingBlocks)
+
+  const putGenesis = util.promisify(blockchain.putGenesis).bind(blockchain)
+  const putBlocks = util.promisify(blockchain.putBlocks).bind(blockchain)
+
+  try {
+    await putGenesis(blocks[0])
+    await putBlocks(blocks.slice(1))
+  } catch (error) {
+    return { error }
+  }
+
+  return {
+    blockchain,
+    blocks,
+    error: null
+  }
+}
+
+export const generateBlocks = (numberOfBlocks: number, existingBlocks?: any[]): any[] => {
+  const blocks = existingBlocks ? existingBlocks : []
+  if (blocks.length === 0) {
+    const genesisBlock = new Block()
+    genesisBlock.setGenesisParams()
+    blocks.push(genesisBlock)
+  }
+  for (let i = blocks.length; i < numberOfBlocks; i++) {
     const block = new Block()
     block.header.number = toBuffer(i)
     block.header.difficulty = '0xfffffff'
@@ -16,7 +45,7 @@ export function generateBlocks(numberOfBlocks: number, genesisBlock: any) {
   return blocks
 }
 
-export function isConsecutive(blocks: Array<any>) {
+export const isConsecutive = (blocks: any[]) => {
   return !blocks.some((block: any, index: number) => {
     if (index === 0) {
       return false
@@ -25,7 +54,7 @@ export function isConsecutive(blocks: Array<any>) {
   })
 }
 
-export function createTestDB(cb: any) {
+export const createTestDB = (cb: any) => {
   const genesis = new Block()
   genesis.setGenesisParams()
   const db = level()
