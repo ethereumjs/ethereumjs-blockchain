@@ -6,7 +6,10 @@ const util = require('util')
 const Block = require('ethereumjs-block')
 const level = require('level-mem')
 
-export const generateBlockchain = async (numberOfBlocks: number, genesisBlock?: any): Promise<any> => {
+export const generateBlockchain = async (
+  numberOfBlocks: number,
+  genesisBlock?: any,
+): Promise<any> => {
   const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
   const existingBlocks: any[] = genesisBlock ? [genesisBlock] : []
   const blocks = generateBlocks(numberOfBlocks, existingBlocks)
@@ -24,7 +27,7 @@ export const generateBlockchain = async (numberOfBlocks: number, genesisBlock?: 
   return {
     blockchain,
     blocks,
-    error: null
+    error: null,
   }
 }
 

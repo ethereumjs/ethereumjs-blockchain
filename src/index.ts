@@ -653,7 +653,7 @@ export default class Blockchain implements BlockchainInterface {
     let i = -1
 
     function nextBlock(blockId: any) {
-      self.getBlock(blockId, function (err?: any, block?: any) {
+      self.getBlock(blockId, function(err?: any, block?: any) {
         i++
 
         if (err) {
@@ -847,7 +847,7 @@ export default class Blockchain implements BlockchainInterface {
         saveLookups(hash, number)
 
         // flag stale head for reset
-        Object.keys(self._heads).forEach(function (name) {
+        Object.keys(self._heads).forEach(function(name) {
           if (staleHash && self._heads[name].equals(staleHash)) {
             self._staleHeads = self._staleHeads || []
             self._staleHeads.push(name)
@@ -867,7 +867,7 @@ export default class Blockchain implements BlockchainInterface {
         })
       } else {
         // set stale heads to last previously valid canonical block
-        ; (self._staleHeads || []).forEach((name: string) => {
+        ;(self._staleHeads || []).forEach((name: string) => {
           self._heads[name] = hash
         })
         delete self._staleHeads
@@ -1055,7 +1055,7 @@ export default class Blockchain implements BlockchainInterface {
     function run(cb2: any) {
       let block: any
 
-      async.series([getBlock, runFunc], function (err?: any) {
+      async.series([getBlock, runFunc], function(err?: any) {
         if (!err) {
           blockNumber.iaddn(1)
         } else {
@@ -1069,7 +1069,7 @@ export default class Blockchain implements BlockchainInterface {
       })
 
       function getBlock(cb3: any) {
-        self.getBlock(blockNumber, function (err?: any, b?: any) {
+        self.getBlock(blockNumber, function(err?: any, b?: any) {
           block = b
           if (block) {
             self._heads[name] = block.hash()
