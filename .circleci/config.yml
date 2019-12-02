@@ -7,60 +7,30 @@ jobs:
     working_directory: ~/ethereumjs-blockchain
     steps:
       - checkout
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Run tests
-          command: yarn test
+      - run: npm install
+      - run: npm run lint
+      - run: npm test
+      - run: npm run coveralls
   build-node10:
     docker:
       - image: node:10.17.0
     working_directory: ~/ethereumjs-blockchain
     steps:
       - checkout
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Run tests
-          command: yarn test
+      - run: npm install
+      - run: npm run lint
+      - run: npm test
+      - run: npm run coveralls
   build-node12:
     docker:
       - image: node:12.13.1
     working_directory: ~/ethereumjs-blockchain
     steps:
       - checkout
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Run tests
-          command: yarn test
+      - run: npm install
+      - run: npm run lint
+      - run: npm test
+      - run: npm run coveralls
 
 workflows:
   version: 2
