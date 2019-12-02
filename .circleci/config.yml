@@ -4,17 +4,35 @@
 #
 version: 2
 jobs:
-  build:
+  build-node8:
     docker:
-      # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: node:8.16.2
+    working_directory: ~/ethereumjs-blockchain
+    steps:
+      - run: echo "hello node 8.16.2"
+  build-node10:
+    docker:
+      - image: node:10.17.0
+    working_directory: ~/ethereumjs-blockchain
+    steps:
+      - run: echo "hello node 8.16.2"
+  build-node12:
+    docker:
+      - image: node:12.13.1
+    working_directory: ~/ethereumjs-blockchain
+    steps:
+      - run: echo "hello node 12.13.1"
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-node8
+      - build-node10
+      - build-node12
 
-    working_directory: ~/repo
+jobs:
+    working_directory: ~/ethereumjs-blockchain
 
     steps:
       - checkout
