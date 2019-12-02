@@ -2,7 +2,7 @@ import * as async from 'async'
 import Common from 'ethereumjs-common'
 import { toBuffer } from 'ethereumjs-util'
 import * as test from 'tape'
-import Blockchain from '../src'
+import Blockchain from '../dist'
 import { generateBlocks, isConsecutive, createTestDB } from './util'
 
 import BN = require('bn.js')
@@ -551,7 +551,7 @@ test('blockchain test', t => {
         st.fail('should not call iterator function')
         st.end()
       },
-      function(err?: Error) {
+      (err?: Error) => {
         st.error(err, 'should not return error')
         st.pass('should finish iterating')
         st.end()
