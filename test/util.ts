@@ -1,4 +1,4 @@
-import { rlp, toBuffer } from 'ethereumjs-util'
+import { rlp, toBuffer, bufferToInt } from 'ethereumjs-util'
 import BN = require('bn.js')
 import Blockchain, { Block } from '../dist'
 
@@ -10,7 +10,7 @@ export const generateBlockchain = async (
   numberOfBlocks: number,
   genesisBlock?: Block,
 ): Promise<any> => {
-  const blockchain = new Blockchain({ validateBlocks: false, validatePow: false })
+  const blockchain = new Blockchain({ validateBlocks: true, validatePow: false })
   const existingBlocks: Block[] = genesisBlock ? [genesisBlock] : []
   const blocks = generateBlocks(numberOfBlocks, existingBlocks)
 
@@ -36,13 +36,16 @@ export const generateBlocks = (numberOfBlocks: number, existingBlocks?: Block[])
   if (blocks.length === 0) {
     const genesisBlock = new Block()
     genesisBlock.setGenesisParams()
+    genesisBlock.header.gasLimit = toBuffer(8000000)
     blocks.push(genesisBlock)
   }
   for (let i = blocks.length; i < numberOfBlocks; i++) {
     const block = new Block()
     block.header.number = toBuffer(i)
-    block.header.difficulty = '0xfffffff'
     block.header.parentHash = blocks[i - 1].hash()
+    block.header.difficulty = block.header.canonicalDifficulty(blocks[i - 1])
+    block.header.gasLimit = toBuffer(8000000)
+    block.header.timestamp = toBuffer(bufferToInt(blocks[i - 1].header.timestamp) + 1);
     blocks.push(block)
   }
   return blocks
