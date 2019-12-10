@@ -45,7 +45,7 @@ export const generateBlocks = (numberOfBlocks: number, existingBlocks?: Block[])
     block.header.parentHash = blocks[i - 1].hash()
     block.header.difficulty = block.header.canonicalDifficulty(blocks[i - 1])
     block.header.gasLimit = toBuffer(8000000)
-    block.header.timestamp = toBuffer(bufferToInt(blocks[i - 1].header.timestamp) + 1);
+    block.header.timestamp = toBuffer(bufferToInt(blocks[i - 1].header.timestamp) + 1)
     blocks.push(block)
   }
   return blocks
