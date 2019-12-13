@@ -1,7 +1,7 @@
 import * as async from 'async'
 import { BN, rlp } from 'ethereumjs-util'
 import Common from 'ethereumjs-common'
-import * as util from 'util'
+import { callbackify } from './callbackify'
 import DBManager from './dbManager'
 import {
   bodyKey,
@@ -19,6 +19,52 @@ const Ethash = require('ethashjs')
 const Stoplight = require('flow-stoplight')
 const level = require('level-mem')
 const semaphore = require('semaphore')
+
+export type Block = any
+
+export interface BlockchainInterface {
+  /**
+   * Adds a block to the blockchain.
+   *
+   * @param block - The block to be added to the blockchain.
+   * @param cb - The callback. It is given two parameters `err` and the saved `block`
+   * @param isGenesis - True if block is the genesis block.
+   */
+  putBlock(block: Block, cb: any, isGenesis?: boolean): void
+
+  /**
+   * Deletes a block from the blockchain. All child blocks in the chain are deleted and any
+   * encountered heads are set to the parent block.
+   *
+   * @param blockHash - The hash of the block to be deleted
+   * @param cb - A callback.
+   */
+  delBlock(blockHash: Buffer, cb: any): void
+
+  /**
+   * Returns a block by its hash or number.
+   */
+  getBlock(blockTag: Buffer | number | BN, cb: (err: Error | null, block?: Block) => void): void
+
+  /**
+   * Iterates through blocks starting at the specified iterator head and calls the onBlock function
+   * on each block.
+   *
+   * @param name - Name of the state root head
+   * @param onBlock - Function called on each block with params (block, reorg, cb)
+   * @param cb - A callback function
+   */
+  iterator(name: string, onBlock: any, cb: any): void
+
+  /**
+   * This method is only here for backwards compatibility. It can be removed once
+   * [this PR](https://github.com/ethereumjs/ethereumjs-block/pull/72/files) gets merged, released,
+   * and ethereumjs-block is updated here.
+   *
+   * The method should just call `cb` with `null` as first argument.
+   */
+  getDetails(_: string, cb: any): void
+}
 
 /**
  * This are the options that the Blockchain constructor can receive.
@@ -47,16 +93,32 @@ export interface BlockchainOptions {
   db?: any
 
   /**
-   * This the flag indicates if blocks should be validated (e.g. Proof-of-Work), latest HF rules
-   * supported: `Petersburg`.
+   * This the flag indicates if blocks and Proof-of-Work should be validated.
+   * This option can't be used in conjunction with `validatePow` nor `validateBlocks`.
+   *
+   * @deprecated
    */
   validate?: boolean
+
+  /**
+   * This flags indicates if Proof-of-work should be validated. If `validate` is provided, this
+   * option takes its value. If neither `validate` nor this option are provided, it defaults to
+   * `true`.
+   */
+  validatePow?: boolean
+
+  /**
+   * This flags indicates if blocks should be validated. See Block#validate for details. If
+   * `validate` is provided, this option takes its value. If neither `validate` nor this option are
+   * provided, it defaults to `true`.
+   */
+  validateBlocks?: boolean
 }
 
 /**
  * This class stores and interacts with blocks.
  */
-export default class Blockchain {
+export default class Blockchain implements BlockchainInterface {
   /**
    * @hidden
    */
@@ -112,9 +174,14 @@ export default class Blockchain {
   ethash: any
 
   /**
-   * A flag indicating if this Blockchain validates blocks or not.
+   * This field is always `true`. It's here only for backwards compatibility.
+   *
+   * @deprecated
    */
-  validate: boolean
+  public readonly validate: boolean = true
+
+  private readonly _validatePow: boolean
+  private readonly _validateBlocks: boolean
 
   /**
    * Creates new Blockchain object
@@ -133,11 +200,27 @@ export default class Blockchain {
       this._common = new Common(chain, hardfork)
     }
 
+    if (opts.validate !== undefined) {
+      if (opts.validatePow !== undefined || opts.validateBlocks !== undefined) {
+        throw new Error(
+          "opts.validate can't be used at the same time than opts.validatePow nor opts.validateBlocks",
+        )
+      }
+    }
+
     // defaults
+
+    if (opts.validate !== undefined) {
+      this._validatePow = opts.validate
+      this._validateBlocks = opts.validate
+    } else {
+      this._validatePow = opts.validatePow !== undefined ? opts.validatePow : true
+      this._validateBlocks = opts.validateBlocks !== undefined ? opts.validateBlocks : true
+    }
+
     this.db = opts.db ? opts.db : level()
     this.dbManager = new DBManager(this.db, this._common)
-    this.validate = opts.validate === undefined ? true : opts.validate
-    this.ethash = this.validate ? new Ethash(this.db) : null
+    this.ethash = this._validatePow ? new Ethash(this.db) : null
     this._heads = {}
     this._genesis = null
     this._headHeader = null
@@ -175,7 +258,7 @@ export default class Blockchain {
     const self = this
 
     async.waterfall(
-      [(cb: any) => self._numberToHash(new BN(0), cb), util.callbackify(getHeads.bind(this))],
+      [(cb: any) => self._numberToHash(new BN(0), cb), callbackify(getHeads.bind(this))],
       err => {
         if (err) {
           // if genesis block doesn't exist, create one
@@ -398,7 +481,7 @@ export default class Blockchain {
     )
 
     function verify(next: any) {
-      if (!self.validate) {
+      if (!self._validateBlocks) {
         return next()
       }
 
@@ -410,7 +493,7 @@ export default class Blockchain {
     }
 
     function verifyPOW(next: any) {
-      if (!self.validate) {
+      if (!self._validatePow) {
         return next()
       }
 
@@ -552,7 +635,7 @@ export default class Blockchain {
    * @hidden
    */
   _getBlock(blockTag: Buffer | number | BN, cb: any) {
-    util.callbackify(this.dbManager.getBlock.bind(this.dbManager))(blockTag, cb)
+    callbackify(this.dbManager.getBlock.bind(this.dbManager))(blockTag, cb)
   }
 
   /**
@@ -560,7 +643,7 @@ export default class Blockchain {
    *
    * @param blockId - The block's hash or number
    * @param maxBlocks - Max number of blocks to return
-   * @param skip - Number of blocks to skip
+   * @param skip - Number of blocks to skip apart
    * @param reverse - Fetch blocks in reverse
    * @param cb - The callback. It is given two parameters `err` and the found `blocks` if any.
    */
@@ -961,7 +1044,11 @@ export default class Blockchain {
     self._hashToNumber(blockHash, (err?: any, number?: any) => {
       if (err) return cb(err)
       blockNumber = number.addn(1)
-      async.whilst(() => blockNumber, run, err => (err ? cb(err) : self._saveHeads(cb)))
+      async.whilst(
+        () => blockNumber,
+        run,
+        err => (err ? cb(err) : self._saveHeads(cb)),
+      )
     })
 
     function run(cb2: any) {
@@ -1004,7 +1091,7 @@ export default class Blockchain {
    * @hidden
    */
   _batchDbOps(dbOps: any, cb: any): void {
-    util.callbackify(this.dbManager.batch.bind(this.dbManager))(dbOps, cb)
+    callbackify(this.dbManager.batch.bind(this.dbManager))(dbOps, cb)
   }
 
   /**
@@ -1013,7 +1100,7 @@ export default class Blockchain {
    * @hidden
    */
   _hashToNumber(hash: Buffer, cb: any): void {
-    util.callbackify(this.dbManager.hashToNumber.bind(this.dbManager))(hash, cb)
+    callbackify(this.dbManager.hashToNumber.bind(this.dbManager))(hash, cb)
   }
 
   /**
@@ -1022,7 +1109,7 @@ export default class Blockchain {
    * @hidden
    */
   _numberToHash(number: BN, cb: any): void {
-    util.callbackify(this.dbManager.numberToHash.bind(this.dbManager))(number, cb)
+    callbackify(this.dbManager.numberToHash.bind(this.dbManager))(number, cb)
   }
 
   /**
@@ -1057,7 +1144,7 @@ export default class Blockchain {
         if (err) {
           return cb(err)
         }
-        util.callbackify(this.dbManager.getHeader.bind(this.dbManager))(hash, number, cb)
+        callbackify(this.dbManager.getHeader.bind(this.dbManager))(hash, number, cb)
       },
     )
   }
@@ -1090,7 +1177,7 @@ export default class Blockchain {
         if (err) {
           return cb(err)
         }
-        util.callbackify(this.dbManager.getTd.bind(this.dbManager))(hash, number, cb)
+        callbackify(this.dbManager.getTd.bind(this.dbManager))(hash, number, cb)
       },
     )
   }

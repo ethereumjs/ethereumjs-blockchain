@@ -1,6 +1,6 @@
 {
   "name": "ethereumjs-blockchain",
-  "version": "4.0.0",
+  "version": "4.0.2",
   "description": "A module to store and interact with blocks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
     "tsc": "ethereumjs-config-tsc",
     "lint": "ethereumjs-config-lint",
     "lint:fix": "ethereumjs-config-lint-fix",
-    "test": "ts-node node_modules/tape/bin/tape ./test/index.ts"
+    "test": "npm run build && ts-node node_modules/tape/bin/tape ./test/index.ts"
   },
   "husky": {
     "hooks": {
@@ -44,15 +44,14 @@
   "dependencies": {
     "async": "^2.6.1",
     "ethashjs": "~0.0.7",
-    "ethereumjs-block": "~2.2.0",
+    "ethereumjs-block": "~2.2.1",
     "ethereumjs-common": "^1.1.0",
     "ethereumjs-util": "~6.1.0",
     "flow-stoplight": "^1.0.0",
     "level-mem": "^3.0.1",
     "lru-cache": "^5.1.1",
     "rlp": "^2.2.2",
-    "semaphore": "^1.1.0",
-    "util": "^0.12.0"
+    "semaphore": "^1.1.0"
   },
   "devDependencies": {
     "@ethereumjs/config-nyc": "^1.1.1",
