@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/ethereumjs/ethereumjs-blockchain#readme",
   "dependencies": {
-    "async": "^2.6.1",
+    "async": "^3.1.1",
     "ethashjs": "~0.0.7",
     "ethereumjs-block": "~2.2.2",
     "ethereumjs-common": "^1.5.0",
