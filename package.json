@@ -58,7 +58,7 @@
     "@ethereumjs/config-prettier": "^1.1.1",
     "@ethereumjs/config-tsc": "^1.1.1",
     "@ethereumjs/config-tslint": "^1.1.1",
-    "@types/async": "^2.4.1",
+    "@types/async": "^3.0.7",
     "@types/bn.js": "^4.11.4",
     "@types/lru-cache": "^5.1.0",
     "@types/node": "^11.11.4",
